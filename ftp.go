@@ -528,7 +528,12 @@ func (c *ServerConn) openDataConn() (net.Conn, error) {
 	}
 
 	if c.options.tlsConfig != nil {
-		return tls.DialWithDialer(&c.options.dialer, "tcp", addr, c.options.tlsConfig)
+		//return tls.DialWithDialer(&c.options.dialer, "tcp", addr, c.options.tlsConfig)
+		conn, err := c.options.dialer.Dial("tcp", addr)
+		if err != nil {
+			return nil, err
+		}
+		return tls.Client(conn, c.options.tlsConfig), err
 	}
 
 	return c.options.dialer.Dial("tcp", addr)
